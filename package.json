@@ -1,0 +1,64 @@
+{
+  "name": "vpndetection-next",
+  "version": "1.0.0",
+  "description": "Official Next.js proxy/middleware for the VPNDetection API. Detect VPNs, proxies, Tor, hosting and CDN visitors on every request.",
+  "type": "module",
+  "packageManager": "pnpm@11.1.0",
+  "license": "MIT",
+  "homepage": "https://vpndetection.io",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vpndetection-io/sdk-nodejs-nextjs.git"
+  },
+  "bugs": {
+    "url": "https://github.com/vpndetection-io/sdk-nodejs-nextjs/issues"
+  },
+  "keywords": [
+    "nextjs",
+    "next",
+    "proxy",
+    "middleware",
+    "vpn",
+    "vpn-detection",
+    "proxy-detection",
+    "tor",
+    "ip-intelligence",
+    "fraud-prevention",
+    "bot-detection",
+    "hosting"
+  ],
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "vpndetection": "^1.8.0"
+  },
+  "peerDependencies": {
+    "next": ">=15"
+  },
+  "devDependencies": {
+    "@types/node": "^26.2.0",
+    "next": "16.3.4",
+    "react": "19.2.0",
+    "typescript": "^5.9.3"
+  },
+  "scripts": {
+    "build": "rm -rf dist && tsc",
+    "test": "pnpm run build && node --test test/*.test.mjs",
+    "prepublishOnly": "pnpm run build"
+  }
+}
