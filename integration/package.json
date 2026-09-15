@@ -17,8 +17,5 @@
     "scripts": {
         "test": "node --test test/*.test.mjs",
         "integration": "node scripts/run.mjs"
-    },
-    "devDependencies": {
-        "@mslmio/eslint-config": "^1.0.0"
     }
 }
