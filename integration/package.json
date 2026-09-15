@@ -19,6 +19,6 @@
         "integration": "node scripts/run.mjs"
     },
     "devDependencies": {
-        "@mslm/libjs-eslint-config": "2.4.0"
+        "@mslmio/eslint-config": "^1.0.0"
     }
 }
