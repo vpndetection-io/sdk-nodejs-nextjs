@@ -1,4 +1,4 @@
-# [<img src="https://s3.vpndetection.io/vpndetection-public/brand/mark.svg" alt="VPNDetection" width="24"/>](https://vpndetection.io/) VPNDetection Next.js Middleware
+# [<img src="https://s3.vpndetection.io/vpndetection-public/brand/mark.svg" alt="VPNDetection" height="28"/>](https://vpndetection.io/) VPNDetection Next.js Middleware
 
 [![npm](https://img.shields.io/npm/v/vpndetection-next.svg)](https://www.npmjs.com/package/vpndetection-next)
 [![license](https://img.shields.io/npm/l/vpndetection-next.svg)](LICENSE)
