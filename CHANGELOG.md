@@ -2,6 +2,12 @@
 
 What each release changed for you, newest first. Each line is a commit's summary, linked to its full description and diff. Releases before 2.0.3 are described by their release commits.
 
+## 2.0.5 - 2026-09-27
+
+### Fixes
+
+- Require vpndetection 5.3.1: no doubled slash, impossible timeouts refused, poll cut ([`1df0db2`](https://github.com/vpndetection-io/sdk-nodejs-nextjs/commit/1df0db27030a955cab7a15ee76946d4fa523d9a6))
+
 ## 2.0.4 - 2026-09-27
 
 ### Features
