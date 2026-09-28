@@ -2,6 +2,12 @@
 
 What each release changed for you, newest first. Each line is a commit's summary, linked to its full description and diff. Releases before 2.0.3 are described by their release commits.
 
+## 2.0.6 - 2026-09-28
+
+### Fixes
+
+- Require vpndetection 5.3.2: IPv4-mapped visitors are looked up, not waved through ([`5186994`](https://github.com/vpndetection-io/sdk-nodejs-nextjs/commit/51869945e61f621fb78b7903d4eb35067440b3f6))
+
 ## 2.0.5 - 2026-09-27
 
 ### Fixes
