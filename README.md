@@ -143,7 +143,7 @@ A serverless deployment gets less from the cache than a long-running one, becaus
 skip: (request) => request.nextUrl.pathname.startsWith('/api/health'),
 ```
 
-Beyond a few million distinct visitors a day, stop calling the API per request: [download the dataset](https://vpndetection.io/databases) and look addresses up locally instead.
+Beyond a few million distinct visitors a day, stop calling the API per request: [download the dataset](https://vpndetection.io/#databases) and look addresses up locally instead.
 
 ## Absent is not false
 
