@@ -2,6 +2,12 @@
 
 What each release changed for you, newest first. Each line is a commit's summary, linked to its full description and diff. Releases before 2.0.3 are described by their release commits.
 
+## 2.0.9 - 2026-10-05
+
+### Features
+
+- Require vpndetection 5.4.0: the authorization code sign-in ([`60dccd9`](https://github.com/vpndetection-io/sdk-nodejs-nextjs/commit/60dccd904df1f4839ac67e31e90ad0c1bf3d6000))
+
 ## 2.0.8 - 2026-10-04
 
 ### Fixes
