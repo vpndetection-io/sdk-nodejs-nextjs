@@ -20,3 +20,17 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm run test
+
+  edge:
+    # Next 15 builds middleware for its Edge runtime unless the app asks for
+    # Node.js, and webpack there refuses any node: import the proxy reaches.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: ./scripts/edge-build.sh
