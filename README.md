@@ -13,7 +13,7 @@ It classifies the visitor behind each request — VPN, residential proxy, Tor, h
 npm install vpndetection-next
 ```
 
-Requires Node.js 22 or newer and Next.js 15 or newer. The proxy runs on the Node.js runtime, never the Edge runtime, so on Next 15 it needs 15.5 or newer and `runtime: 'nodejs'` in its `config`, as below.
+Requires Node.js 22 or newer and Next.js 15 or newer. The proxy runs on the Node.js runtime and, on Next 15, on the Edge runtime too.
 
 You need an API key. Create one in the [console](https://app.vpndetection.io); the free tier's allowance is counted per source address, and a deployment is a single source address, so a key is what makes this usable in production rather than optional.
 
@@ -28,18 +28,15 @@ export const proxy = createProxy({ apiKey: process.env.VPNDETECTION_API_KEY });
 export const config = { matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'] };
 ```
 
-Next 15 runs middleware on the Edge runtime unless its `config` says otherwise, and its build fails there with `UnhandledSchemeError: Reading from "node:crypto"`. Ask for Node.js, which is stable from 15.5:
+On Next 15 the file is `middleware.ts`, and it runs on the Edge runtime unless its `config` asks for `runtime: 'nodejs'`, which is stable from 15.5. Either works:
 
 ```ts
-// middleware.ts, on Next 15.5 or newer
+// middleware.ts, on Next 15
 import { createProxy } from 'vpndetection-next';
 
 export const middleware = createProxy({ apiKey: process.env.VPNDETECTION_API_KEY });
 
-export const config = {
-    runtime: 'nodejs',
-    matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
-};
+export const config = { matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'] };
 ```
 
 Then read the answer anywhere downstream:
