@@ -2,6 +2,12 @@
 
 What each release changed for you, newest first. Each line is a commit's summary, linked to its full description and diff. Releases before 2.0.3 are described by their release commits.
 
+## 2.1.0 - 2026-10-10
+
+### Features
+
+- Require vpndetection 5.5.1: the proxy builds on Next 15's Edge runtime ([`ea522cc`](https://github.com/vpndetection-io/sdk-nodejs-nextjs/commit/ea522cc4c5801afcf631e386e1d49ceffcb86a16))
+
 ## 2.0.9 - 2026-10-05
 
 ### Features
