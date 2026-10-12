@@ -2,6 +2,12 @@
 
 What each release changed for you, newest first. Each line is a commit's summary, linked to its full description and diff. Releases before 2.0.3 are described by their release commits.
 
+## 2.1.1 - 2026-10-12
+
+### Fixes
+
+- Require vpndetection 5.5.2: an unreadable answer is retried, a blank key sends none ([`7f9b8e0`](https://github.com/vpndetection-io/sdk-nodejs-nextjs/commit/7f9b8e0fc29cf21faf68a7bd74f4633c01fb23f1))
+
 ## 2.1.0 - 2026-10-10
 
 ### Features
