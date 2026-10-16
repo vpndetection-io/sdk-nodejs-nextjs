@@ -2,6 +2,12 @@
 
 What each release changed for you, newest first. Each line is a commit's summary, linked to its full description and diff. Releases before 2.0.3 are described by their release commits.
 
+## 2.1.2 - 2026-10-16
+
+### Fixes
+
+- Require vpndetection 5.5.3: the spec re-pinned to 2026.10.15 ([`0695fae`](https://github.com/vpndetection-io/sdk-nodejs-nextjs/commit/0695fae2775da2dd1f590da4c12e9ac98d96b1d6))
+
 ## 2.1.1 - 2026-10-12
 
 ### Fixes
