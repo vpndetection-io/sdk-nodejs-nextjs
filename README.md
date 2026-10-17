@@ -43,14 +43,27 @@ Then read the answer anywhere downstream:
 
 ```tsx
 // app/page.tsx
+import { Suspense } from 'react';
 import { headers } from 'next/headers';
 import { readLookup } from 'vpndetection-next';
 
-export default async function Page() {
+async function Greeting() {
     const lookup = readLookup(await headers());
-    return <main>{lookup?.isVpn ? 'Hello, VPN user' : 'Hello'}</main>;
+    return lookup?.isVpn ? 'Hello, VPN user' : 'Hello';
+}
+
+export default function Page() {
+    return (
+        <main>
+            <Suspense fallback="Hello">
+                <Greeting />
+            </Suspense>
+        </main>
+    );
 }
 ```
+
+The read of `headers()` sits inside `<Suspense>` because a new Next 16 app turns Cache Components on, and `next build` then refuses a page that reads request data outside one.
 
 By default nothing is blocked. Your own code decides what the answer means — which is usually what you want, because whether a VPN visitor is a problem depends entirely on what they are doing.
 
