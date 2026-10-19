@@ -2,6 +2,12 @@
 
 What each release changed for you, newest first. Each line is a commit's summary, linked to its full description and diff. Releases before 2.0.3 are described by their release commits.
 
+## 2.1.5 - 2026-10-19
+
+### Fixes
+
+- Require vpndetection 5.8.0: num_ports and num_proxies in the pubproxy detail ([`8faa252`](https://github.com/vpndetection-io/sdk-nodejs-nextjs/commit/8faa2526ad75da83f2276c484922e8bdc2c1d3f8))
+
 ## 2.1.4 - 2026-10-18
 
 ### Fixes
