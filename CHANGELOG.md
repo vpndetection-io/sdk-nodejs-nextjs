@@ -8,6 +8,10 @@ What each release changed for you, newest first. Each line is a commit's summary
 
 - Require vpndetection 5.10.0: lookup results carry location and asn ([`324ebc7`](https://github.com/vpndetection-io/sdk-nodejs-nextjs/commit/324ebc76519f6945ac649262d9746a4332912e63))
 
+### Fixes
+
+- Forward an answer carrying a flag emoji or a currency sign ([`e757fb3`](https://github.com/vpndetection-io/sdk-nodejs-nextjs/commit/e757fb3a6c9d2d152a8ab792401f6e01f7085301))
+
 ## 2.1.7 - 2026-10-20
 
 ### Fixes
