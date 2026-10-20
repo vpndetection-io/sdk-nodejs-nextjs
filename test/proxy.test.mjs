@@ -55,6 +55,24 @@ test('continues and forwards the answer to the app', async () => {
     assert.deepEqual(asked, [PUBLIC_IP]);
 });
 
+// A header carries bytes, so an answer with a flag emoji or a currency sign must still go through,
+// and read back as it was served.
+test('forwards an answer carrying text a header cannot hold as it is', async () => {
+    const location = {
+        continent: 'EU', continent_name: 'Europe', country: 'AT', country_name: 'Austria',
+        timezone: 'Europe/Vienna', currency_code: 'EUR', currency_name: 'Euro', currency_symbol: '€',
+        flag_emoji: '🇦🇹', flag_unicode: 'U+1F1E6 U+1F1F9',
+    };
+    const { client: client } = stubClient({ is_vpn: true, location: location });
+    const proxy = createProxy({ client: client, ipSelector: fixedIp });
+
+    const response = await proxy(request());
+    assert.equal(response.status, 200);
+
+    const forwarded = readLookup(overriddenHeaders(response));
+    assert.deepEqual(forwarded.result.location, location);
+});
+
 // NextResponse.next({ request: { headers } }) does not put the headers on the
 // response; it records them for the server to replay onto the onward request.
 // Reading them back is the only way to assert what the app will actually see.

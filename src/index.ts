@@ -94,7 +94,7 @@ export function createGuard(options: Options = {}) {
         const headers = new Headers(request.headers);
         headers.delete(LOOKUP_HEADER);
         if (forwarding && lookup !== undefined) {
-            headers.set(LOOKUP_HEADER, JSON.stringify(toForwarded(lookup)));
+            headers.set(LOOKUP_HEADER, asciiJson(toForwarded(lookup)));
         }
         return NextResponse.next({ request: { headers: headers } });
     };
@@ -179,6 +179,13 @@ function firstForwarded(request: NextRequest): string | undefined {
 // Deliberately compact. This rides on a request header, which has a size limit
 // every proxy in front of you enforces, so it carries the decision and the
 // served body rather than a second copy of the idiomatic view.
+// A header value is bytes, so `Headers.set` throws on anything past U+00FF: a flag emoji, a currency
+// sign such as the euro's, an AS name in another script. JSON's own escapes carry those as ASCII,
+// and `JSON.parse` in `readLookup` reads them back unchanged.
+function asciiJson(value: ForwardedLookup): string {
+    return JSON.stringify(value).replace(/[\u007f-\uffff]/g, (c) => `\\u${c.charCodeAt(0).toString(16).padStart(4, '0')}`);
+}
+
 function toForwarded(lookup: Lookup): ForwardedLookup {
     return {
         ...(lookup.ip === undefined ? {} : { ip: lookup.ip }),
