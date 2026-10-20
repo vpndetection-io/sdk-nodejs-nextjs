@@ -15,7 +15,7 @@ npm install vpndetection-next
 
 Requires Node.js 22 or newer and Next.js 15 or newer. The proxy runs on the Node.js runtime and, on Next 15, on the Edge runtime too.
 
-You need an API key. Create one in the [console](https://app.vpndetection.io); the free tier's allowance is counted per source address, and a deployment is a single source address, so a key is what makes this usable in production rather than optional.
+You need an API key. Create one in the [console](https://app.vpndetection.io); without one the allowance is counted per source address, and a deployment is a single source address, so a key is what makes this usable in production rather than optional.
 
 Next 16 renamed the file convention from `middleware.ts` to `proxy.ts`, and the export from `middleware` to `proxy`. Both work on 16 — `middleware.ts` logs a deprecation — so use whichever your version supports.
 
@@ -171,7 +171,7 @@ Beyond a few million distinct visitors a day, stop calling the API per request: 
 
 ## Absent is not false
 
-Only `ip` and `isVpn` come back on every plan. A field your plan does not include is absent, which means "not in your plan" rather than "checked, and no".
+Without a key only `ip` and `isVpn` come back, and a free key adds Tor, relay, `location` and `asn`. A field your plan does not include is absent, which means "not in your plan" rather than "checked, and no".
 
 ```ts
 lookup.result?.is_hosting ?? false   // when you only want the flag
