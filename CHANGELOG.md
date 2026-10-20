@@ -2,6 +2,12 @@
 
 What each release changed for you, newest first. Each line is a commit's summary, linked to its full description and diff. Releases before 2.0.3 are described by their release commits.
 
+## 2.1.7 - 2026-10-20
+
+### Fixes
+
+- Require vpndetection 5.9.0: oauth.register, and OAuth answers that are not JSON ([`0f389c8`](https://github.com/vpndetection-io/sdk-nodejs-nextjs/commit/0f389c854b8e64b5f64382da96080c11b9d8a024))
+
 ## 2.1.6 - 2026-10-20
 
 ### Fixes
