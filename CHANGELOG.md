@@ -2,6 +2,12 @@
 
 What each release changed for you, newest first. Each line is a commit's summary, linked to its full description and diff. Releases before 2.0.3 are described by their release commits.
 
+## 2.1.9 - 2026-10-23
+
+### Fixes
+
+- Require vpndetection 5.10.1, which types every answer member ([`26c6392`](https://github.com/vpndetection-io/sdk-nodejs-nextjs/commit/26c6392b441a97bce01bc9248700101b6c480a12))
+
 ## 2.1.8 - 2026-10-20
 
 ### Features
