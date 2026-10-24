@@ -4,7 +4,7 @@
     "private": true,
     "description": "A Next 15 app whose middleware builds for the Edge runtime. scripts/edge-build.sh installs this package into it.",
     "dependencies": {
-        "next": "15.5.27",
+        "next": "15.5.28",
         "react": "19.2.0",
         "react-dom": "19.2.0"
     },
