@@ -2,6 +2,12 @@
 
 What each release changed for you, newest first. Each line is a commit's summary, linked to its full description and diff. Releases before 2.0.3 are described by their release commits.
 
+## 2.1.11 - 2026-11-04
+
+### Fixes
+
+- Require vpndetection 5.10.3, which sends no poll at the deadline ([`d38abea`](https://github.com/vpndetection-io/sdk-nodejs-nextjs/commit/d38abea32799c9d5385b233abea7da154ee773c3))
+
 ## 2.1.10 - 2026-10-26
 
 ### Fixes
