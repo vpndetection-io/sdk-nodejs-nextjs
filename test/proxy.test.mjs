@@ -225,3 +225,46 @@ test('a condition that constrains nothing is refused at construction', () => {
     assert.throws(() => createProxy({ blockCondition: { isVpn: false } }), /constrains nothing/);
     assert.throws(() => createGuard({ blockCondition: {} }), /constrains nothing/);
 });
+
+// Built exactly as the README builds it: an API key from the environment and nothing
+// else. Every other test passes a client, so none could see the proxy fail to start,
+// or send no key, the README's way.
+test('builds as the README does, with the key set and unset', async () => {
+    const realFetch = globalThis.fetch;
+    const savedKey = process.env.VPNDETECTION_API_KEY;
+    const sent = [];
+    globalThis.fetch = async (input, init) => {
+        const outgoing = new Request(input, init);
+        if (new URL(outgoing.url).hostname !== 'api.vpndetection.io') {
+            return realFetch(input, init);
+        }
+        sent.push({ path: new URL(outgoing.url).pathname, auth: outgoing.headers.get('authorization') });
+        return new Response(JSON.stringify({ ip: PUBLIC_IP, is_vpn: true }), {
+            status: 200, headers: { 'content-type': 'application/json' },
+        });
+    };
+    try {
+        for (const key of ['readme-key', undefined]) {
+            if (key === undefined) {
+                delete process.env.VPNDETECTION_API_KEY;
+            } else {
+                process.env.VPNDETECTION_API_KEY = key;
+            }
+            sent.length = 0;
+
+            const proxy = createProxy({ apiKey: process.env.VPNDETECTION_API_KEY });
+
+            const response = await proxy(request({ 'x-forwarded-for': PUBLIC_IP }));
+            assert.equal(response.status, 200, `key ${key}`);
+            assert.equal(readLookup(overriddenHeaders(response))?.isVpn, true, `key ${key}`);
+            assert.deepEqual(sent, [{ path: `/${PUBLIC_IP}`, auth: key === undefined ? null : `Bearer ${key}` }]);
+        }
+    } finally {
+        globalThis.fetch = realFetch;
+        if (savedKey === undefined) {
+            delete process.env.VPNDETECTION_API_KEY;
+        } else {
+            process.env.VPNDETECTION_API_KEY = savedKey;
+        }
+    }
+});
