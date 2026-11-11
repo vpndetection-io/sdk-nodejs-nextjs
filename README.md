@@ -15,7 +15,7 @@ npm install vpndetection-next
 
 Requires Node.js 22 or newer and Next.js 15 or newer. The proxy runs on the Node.js runtime and, on Next 15, on the Edge runtime too.
 
-You need an API key. Create one in the [console](https://app.vpndetection.io); without one a lookup is on the Unlimited tier, for [non-commercial use](https://vpndetection.io/terms#no-key) only, and leaves out the hosting, CDN and proxy flags, so a key is what makes this usable in production rather than optional.
+You need an API key on a paid plan. Create one in the [console](https://app.vpndetection.io); without one a lookup is on the Unlimited tier and leaves out the hosting, CDN and proxy flags, so a paid plan is what makes this usable in production rather than optional. A new account can try every field, 100 lookups a day.
 
 Next 16 renamed the file convention from `middleware.ts` to `proxy.ts`, and the export from `middleware` to `proxy`. Both work on 16 — `middleware.ts` logs a deprecation — so use whichever your version supports.
 
@@ -171,7 +171,7 @@ Beyond a few million distinct visitors a day, stop calling the API per request: 
 
 ## Absent is not false
 
-Without a key a lookup leaves out `isHosting`, `isCdn` and the four proxy flags, and a free key leaves out `vpn` and the detail behind each flag. A field your plan does not include is absent, which means "not in your plan" rather than "checked, and no".
+The Unlimited tier, with a key or without one, leaves out `isHosting`, `isCdn` and the four proxy flags, and of the detail behind each flag it answers only Tor's and relay's. A field your plan does not include is absent, which means "not in your plan" rather than "checked, and no".
 
 ```ts
 lookup.result?.is_hosting ?? false   // when you only want the flag
