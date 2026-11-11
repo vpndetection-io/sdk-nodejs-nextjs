@@ -2,6 +2,12 @@
 
 What each release changed for you, newest first. Each line is a commit's summary, linked to its full description and diff. Releases before 2.0.3 are described by their release commits.
 
+## 2.1.17 - 2026-11-11
+
+### Features
+
+- Require vpndetection 5.13.0: trial_expired on a trial key's answers ([`44d65f9`](https://github.com/vpndetection-io/sdk-nodejs-nextjs/commit/44d65f99a7d082e4f2844a32c273d9b934c15085))
+
 ## 2.1.16 - 2026-11-11
 
 ### Fixes
