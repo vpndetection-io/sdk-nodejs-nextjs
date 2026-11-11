@@ -15,7 +15,7 @@ npm install vpndetection-next
 
 Requires Node.js 22 or newer and Next.js 15 or newer. The proxy runs on the Node.js runtime and, on Next 15, on the Edge runtime too.
 
-You need an API key. Create one in the [console](https://app.vpndetection.io); without one, lookups are limited to 60 a minute from each source address, and a deployment is a single source address, so a key is what makes this usable in production rather than optional.
+You need an API key. Create one in the [console](https://app.vpndetection.io); without one a lookup leaves out the hosting, CDN and proxy flags, so a key is what makes this usable in production rather than optional.
 
 Next 16 renamed the file convention from `middleware.ts` to `proxy.ts`, and the export from `middleware` to `proxy`. Both work on 16 — `middleware.ts` logs a deprecation — so use whichever your version supports.
 
