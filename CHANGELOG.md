@@ -2,6 +2,12 @@
 
 What each release changed for you, newest first. Each line is a commit's summary, linked to its full description and diff. Releases before 2.0.3 are described by their release commits.
 
+## 2.1.16 - 2026-11-11
+
+### Fixes
+
+- Require vpndetection 5.12.2: the Unlimited tier and its terms ([`cd5105f`](https://github.com/vpndetection-io/sdk-nodejs-nextjs/commit/cd5105ff55f0daf9be5dec6e91ca07ebedc6ef62))
+
 ## 2.1.15 - 2026-11-11
 
 ### Fixes
