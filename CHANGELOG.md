@@ -2,6 +2,12 @@
 
 What each release changed for you, newest first. Each line is a commit's summary, linked to its full description and diff. Releases before 2.0.3 are described by their release commits.
 
+## 2.1.24 - 2026-11-19
+
+### Fixes
+
+- Require vpndetection 5.16.2: a reduced answer is cached a minute at most ([`4a56123`](https://github.com/vpndetection-io/sdk-nodejs-nextjs/commit/4a561237ff18213d6d738e3c99e7d44a66c8eaf6))
+
 ## 2.1.23 - 2026-11-19
 
 ### Fixes
