@@ -2,6 +2,12 @@
 
 What each release changed for you, newest first. Each line is a commit's summary, linked to its full description and diff. Releases before 2.0.3 are described by their release commits.
 
+## 2.1.25 - 2026-11-20
+
+### Features
+
+- Require vpndetection 5.17.0: a lookup reads the network, service, company and abuse members ([`06c508e`](https://github.com/vpndetection-io/sdk-nodejs-nextjs/commit/06c508eff45816435a037be3f059b0a3d5bfbbbc))
+
 ## 2.1.24 - 2026-11-19
 
 ### Fixes
