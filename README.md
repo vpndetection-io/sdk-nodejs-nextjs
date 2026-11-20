@@ -3,9 +3,9 @@
 [![npm](https://img.shields.io/npm/v/vpndetection-next.svg)](https://www.npmjs.com/package/vpndetection-next)
 [![license](https://img.shields.io/npm/l/vpndetection-next.svg)](LICENSE)
 
-The official [Next.js](https://nextjs.org) proxy middleware for the [VPNDetection](https://vpndetection.io) API.
+The official [Next.js](https://nextjs.org) proxy middleware for the [VPNDetection](https://vpndetection.io) API: it checks each visitor's IP for VPN, Tor and proxy use, and can block them with a 403.
 
-It classifies the visitor behind each request — VPN, residential proxy, Tor, hosting, CDN, relay — and forwards the answer to your app, where Server Components and Route Handlers can read it. Blocking is opt-in.
+It classifies the visitor behind each request: VPN, residential proxy, Tor, hosting, CDN, relay. It forwards the answer to your app, where Server Components and Route Handlers can read it. Blocking is opt-in.
 
 ## Getting Started
 
@@ -15,9 +15,9 @@ npm install vpndetection-next
 
 Requires Node.js 22 or newer and Next.js 15 or newer. The proxy runs on the Node.js runtime and, on Next 15, on the Edge runtime too.
 
-You need an API key on a paid plan. Create one in the [console](https://app.vpndetection.io); without one a lookup is on Unlimited, the free plan, and leaves out the hosting, CDN and proxy flags, so a paid plan is what makes this usable in production rather than optional. A free account tries every field.
+No API key needed to start. Without one, a lookup is on Unlimited, the free plan, which answers VPN, Tor and relay detection with no daily or monthly cap. A paid plan's key adds the hosting, CDN and proxy flags and the provider behind each flag: create one in the [console](https://app.vpndetection.io). A free account tries every field.
 
-Next 16 renamed the file convention from `middleware.ts` to `proxy.ts`, and the export from `middleware` to `proxy`. Both work on 16 — `middleware.ts` logs a deprecation — so use whichever your version supports.
+Next 16 renamed the file convention from `middleware.ts` to `proxy.ts`, and the export from `middleware` to `proxy`. Both work on 16, though `middleware.ts` logs a deprecation, so use whichever your version supports.
 
 ```ts
 // proxy.ts
@@ -65,7 +65,7 @@ export default function Page() {
 
 The read of `headers()` sits inside `<Suspense>` because a new Next 16 app turns Cache Components on, and `next build` then refuses a page that reads request data outside one.
 
-By default nothing is blocked. Your own code decides what the answer means — which is usually what you want, because whether a VPN visitor is a problem depends entirely on what they are doing.
+By default nothing is blocked. Your own code decides what to do with the answer, since whether a VPN visitor is a problem depends on what they're doing.
 
 **Set a `matcher`.** Without one the proxy runs on every request including static assets, which costs a lookup each.
 
@@ -91,7 +91,7 @@ blockCondition: [{ isTor: true }, { isResproxy: true }]               // a list 
 
 Values are matched by equality, strings without regard to case. An array means any-of. `{ gte, gt, lte, lt }` compares numbers, and every bound you give must hold, so two of them are a range. Members you set to `false` or `null` are ignored, so a condition states the signals you act on; one that constrains nothing would match every request, and is refused when the proxy is created rather than silently blocking all your traffic.
 
-Replace the refusal with `onBlocked` — a redirect is usually friendlier than a 403:
+Replace the refusal with `onBlocked`. A redirect is usually friendlier than a 403:
 
 ```ts
 onBlocked: (request) => NextResponse.redirect(new URL('/no-vpn', request.url)),
@@ -120,9 +120,9 @@ export async function proxy(request: NextRequest) {
 
 ## Where the client address comes from
 
-This is the setting that decides whether any of the above works, and Next makes it more your problem than most frameworks do.
+Get this setting right, or none of the above works. Next makes it more your problem than most frameworks do.
 
-**Next has no socket peer to offer.** `NextRequest.ip` was removed in Next 15, and a proxy runs ahead of the server, so a forwarded header is the only address available — this is the one place where the default is a header rather than a connection.
+**Next has no socket peer to offer.** `NextRequest.ip` was removed in Next 15, and a proxy runs ahead of the server, so a forwarded header is the only address available. This is the one place where the default is a header rather than a connection.
 
 The default reads the left-most `X-Forwarded-For` entry. That is correct when the platform in front of you **overwrites** the header, which Vercel does and any ingress you control can be configured to. Behind something that **appends**, the left-most entry is whatever the visitor sent, and detection silently does nothing.
 
@@ -137,7 +137,7 @@ createProxy({
 });
 ```
 
-If you know how many proxies sit in front, count from the right: `xffIpSelector({ depth: 1 })` is the address your nearest proxy saw. Anything else, pass your own function — it receives the `NextRequest` and returns an address.
+If you know how many proxies sit in front, count from the right: `xffIpSelector({ depth: 1 })` is the address your nearest proxy saw. Anything else, pass your own function: it receives the `NextRequest` and returns an address.
 
 If the address resolves to a private one, or to nothing at all, the proxy says so once on `console.warn`. That is expected running locally and is the signal to fix your configuration anywhere else.
 
@@ -145,7 +145,7 @@ If the address resolves to a private one, or to nothing at all, the proxy says s
 
 The answer travels to your app on `x-vpndetection`, because a proxy runs in its own context and a request header is the only thing that crosses into it.
 
-**Any copy the caller sent is deleted before ours is written.** That overwrite is the entire basis of trusting it downstream — without it a visitor could set the header themselves and tell your app whatever they liked about their own address. It is the same rule an ingress follows for a real-IP header, and it holds even when the request was skipped.
+**Any copy the caller sent is deleted before ours is written.** That overwrite is the entire basis of trusting it downstream: without it a visitor could set the header themselves and tell your app whatever they liked about their own address. It is the same rule an ingress follows for a real-IP header, and it holds even when the request was skipped.
 
 Turn it off with `forward: false` if you only ever block and never read the answer.
 
@@ -155,7 +155,7 @@ The request is let through, and the reason is on `lookup.error`. Our outage shou
 
 ## Cost and latency
 
-Answers are cached for an hour per proxy instance, so a returning visitor costs nothing, and private addresses never leave the process. A cache miss is one request to our API, bounded at 2500 ms by default and not retried — on a request path, failing open quickly beats holding a visitor while we try again.
+Answers are cached for an hour per proxy instance, so a returning visitor costs nothing, and private addresses never leave the process. A cache miss is one request to our API, bounded at 2500 ms by default and not retried: on a request path, failing open fast beats holding a visitor while we retry.
 
 ```ts
 createProxy({ apiKey: KEY, timeoutMs: 1000, retries: 1, cache: { max: 50000, ttlMs: 600000 } })
