@@ -103,6 +103,21 @@ test('blocks with 403 when the condition matches, and passes when it does not', 
     assert.equal((await allowing(request())).status, 200);
 });
 
+// Every answer carries is_bot, and a paid one's bot says whether its operator
+// vouches for the address, so either condition blocks a bot's public address and
+// lets the rest through.
+test('a condition on a bot blocks a bot and passes the rest', async () => {
+    for (const condition of [{ isBot: true }, { bot: { verified: true } }]) {
+        for (const [isBot, bot] of [[true, { provider: 'google', verified: true }], [false, {}]]) {
+            const served = stubClient({ is_vpn: false, is_bot: isBot, bot: bot });
+            const proxy = createProxy({ client: served.client, ipSelector: fixedIp, blockCondition: condition });
+            const response = await proxy(request());
+            assert.equal(response.status, isBot ? 403 : 200, `${JSON.stringify(condition)} against isBot ${isBot}`);
+            assert.deepEqual(served.asked, [PUBLIC_IP]);
+        }
+    }
+});
+
 test('onBlocked replaces the refusal entirely', async () => {
     const { client: client } = stubClient();
     const proxy = createProxy({
