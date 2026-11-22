@@ -2,6 +2,12 @@
 
 What each release changed for you, newest first. Each line is a commit's summary, linked to its full description and diff. Releases before 2.0.3 are described by their release commits.
 
+## 2.1.26 - 2026-11-22
+
+### Fixes
+
+- Require vpndetection 5.17.1: a cache TTL or size that is not a whole number from 1 is refused ([`57915d8`](https://github.com/vpndetection-io/sdk-nodejs-nextjs/commit/57915d83e5ebab2f504b531ff05638ba2810b39e))
+
 ## 2.1.25 - 2026-11-20
 
 ### Features
