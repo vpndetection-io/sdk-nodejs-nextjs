@@ -10,7 +10,7 @@ import { test } from 'node:test';
 import { NextRequest } from 'next/server.js';
 import { VPNDetection } from 'vpndetection';
 
-import { createProxy } from '../dist/index.js';
+import { createProxy, readLookup } from '../dist/index.js';
 
 const data = JSON.parse(readFileSync(new URL('../testdata/testdata.json', import.meta.url), 'utf8'));
 
@@ -34,6 +34,18 @@ function request() {
     return new NextRequest(new Request('https://example.test/'));
 }
 
+// The headers NextResponse.next() records for the server to replay onto the onward request.
+function overriddenHeaders(response) {
+    const overridden = {};
+    for (const [name, value] of response.headers) {
+        const match = name.match(/^x-middleware-request-(.+)$/);
+        if (match) {
+            overridden[match[1]] = value;
+        }
+    }
+    return { get: (name) => overridden[name.toLowerCase()] ?? null };
+}
+
 for (const c of data.middleware.conditions) {
     test(`corpus: ${c.name}`, async () => {
         const ip = c.bogon ?? c.body.ip;
@@ -54,6 +66,17 @@ for (const c of data.middleware.conditions) {
         const res = await proxy(request());
 
         assert.equal(res.status, c.expect.blocked ? 403 : 200, c.why);
+        if (!c.expect.blocked) {
+            // A 200 alone passes with the proxy removed: the answer it forwarded is the proof.
+            const forwarded = readLookup(overriddenHeaders(res));
+            assert.equal(forwarded?.ip, ip, c.why);
+            // A bogon never reached the API, so it forwards no served body to read the address from.
+            if (c.bogon === undefined) {
+                assert.equal(forwarded.result?.ip, ip, c.why);
+            }
+            assert.equal(forwarded.isVpn, c.body?.is_vpn ?? false, c.why);
+            assert.equal(forwarded.blocked, false, c.why);
+        }
         const missing = c.expect.missing.map((m) => MEMBER[m] ?? m);
         const reported = warnings.filter((w) => w.includes('does not include'));
         assert.equal(reported.length, missing.length === 0 ? 0 : 1, c.why);
