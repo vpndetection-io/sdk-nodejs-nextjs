@@ -76,6 +76,25 @@ test('forwards an answer carrying text a header cannot hold as it is', async () 
     assert.deepEqual(forwarded.result.location, location);
 });
 
+// A bogon is answered by the client with no request made. Through 2.1.29 its
+// forwarded `result` was an empty object, so a Server Component read nothing.
+test('forwards a bogon peer\'s local answer in the wire shape', async () => {
+    const { client: client, asked: asked } = stubClient();
+    const proxy = createProxy({ client: client, ipSelector: () => '10.0.0.1' });
+
+    const response = await proxy(request());
+    assert.equal(response.status, 200);
+
+    const forwarded = readLookup(overriddenHeaders(response));
+    assert.equal(forwarded.ip, '10.0.0.1');
+    assert.equal(forwarded.isVpn, false);
+    assert.equal(forwarded.result.is_bogon, true);
+    assert.equal(forwarded.result.is_vpn, false);
+    assert.equal(forwarded.result.asn.asn, 0);
+    assert.deepEqual(forwarded.result.dns_resolver, {});
+    assert.deepEqual(asked, []);
+});
+
 // NextResponse.next({ request: { headers } }) does not put the headers on the
 // response; it records them for the server to replay onto the onward request.
 // Reading them back is the only way to assert what the app will actually see.
