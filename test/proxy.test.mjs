@@ -159,13 +159,18 @@ test('a forged header is deleted even when nothing was looked up', async () => {
     const response = await proxy(request({ [LOOKUP_HEADER]: forged }));
     assert.equal(readLookup(overriddenHeaders(response)), undefined,
         'a skipped request must not carry a caller-supplied answer');
+    // No override at all would hand the app the request's own headers, the forged one included.
+    const kept = response.headers.get('x-middleware-override-headers')?.split(',') ?? [];
+    assert.ok(kept.length > 0, 'the onward request must be rewritten without the forged header');
+    assert.ok(!kept.includes(LOOKUP_HEADER));
 });
 
 test('forward: false leaves the header off entirely', async () => {
-    const { client: client } = stubClient();
+    const { client: client, asked: asked } = stubClient();
     const proxy = createProxy({ client: client, ipSelector: fixedIp, forward: false });
     const response = await proxy(request());
     assert.equal(readLookup(overriddenHeaders(response)), undefined);
+    assert.deepEqual(asked, [PUBLIC_IP], 'the lookup still runs; only the header is left off');
 });
 
 test('createGuard composes with a proxy that does other work', async () => {
@@ -189,6 +194,9 @@ test('skip claims the request and costs no lookup', async () => {
     });
     assert.equal((await proxy(request())).status, 200);
     assert.deepEqual(asked, []);
+    // The request skip does not claim is looked up and refused, or the above passes with no proxy.
+    assert.equal((await proxy(request({}, 'https://example.test/other'))).status, 403);
+    assert.deepEqual(asked, [PUBLIC_IP]);
 });
 
 test('a failing lookup lets the visitor through', async () => {
