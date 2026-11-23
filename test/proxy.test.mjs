@@ -6,6 +6,7 @@
 // default selector is a header rather than a connection.
 
 import assert from 'node:assert/strict';
+import { createRequire } from 'node:module';
 import { test } from 'node:test';
 
 import { NextRequest, NextResponse } from 'next/server.js';
@@ -17,6 +18,8 @@ import {
 } from '../dist/index.js';
 
 const PUBLIC_IP = '45.83.91.1';
+// The client names itself and its version on every request, from 5.19.0.
+const BASE_VERSION = createRequire(import.meta.url)('vpndetection/package.json').version;
 
 function stubClient(body = { is_vpn: true, vpn: { provider: 'nordvpn' } }) {
     const asked = [];
@@ -253,7 +256,10 @@ test('builds as the README does, with the key set and unset', async () => {
         if (new URL(outgoing.url).hostname !== 'api.vpndetection.io') {
             return realFetch(input, init);
         }
-        sent.push({ path: new URL(outgoing.url).pathname, auth: outgoing.headers.get('authorization') });
+        sent.push({
+            path: new URL(outgoing.url).pathname, auth: outgoing.headers.get('authorization'),
+            agent: outgoing.headers.get('user-agent'),
+        });
         return new Response(JSON.stringify({ ip: PUBLIC_IP, is_vpn: true }), {
             status: 200, headers: { 'content-type': 'application/json' },
         });
@@ -272,7 +278,10 @@ test('builds as the README does, with the key set and unset', async () => {
             const response = await proxy(request({ 'x-forwarded-for': PUBLIC_IP }));
             assert.equal(response.status, 200, `key ${key}`);
             assert.equal(readLookup(overriddenHeaders(response))?.isVpn, true, `key ${key}`);
-            assert.deepEqual(sent, [{ path: `/${PUBLIC_IP}`, auth: key === undefined ? null : `Bearer ${key}` }]);
+            assert.deepEqual(sent, [{
+                path: `/${PUBLIC_IP}`, auth: key === undefined ? null : `Bearer ${key}`,
+                agent: `vpndetection-nodejs/${BASE_VERSION}`,
+            }]);
         }
     } finally {
         globalThis.fetch = realFetch;
