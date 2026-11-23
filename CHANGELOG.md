@@ -2,6 +2,12 @@
 
 What each release changed for you, newest first. Each line is a commit's summary, linked to its full description and diff. Releases before 2.0.3 are described by their release commits.
 
+## 2.1.30 - 2026-11-23
+
+### Fixes
+
+- Require vpndetection 5.19.2: a bogon visitor's forwarded result carries the answer, is_bogon included ([`6d367ba`](https://github.com/vpndetection-io/sdk-nodejs-nextjs/commit/6d367ba716700873155261f8d7669ceaae6b627e))
+
 ## 2.1.29 - 2026-11-23
 
 ### Fixes
