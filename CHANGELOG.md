@@ -2,6 +2,12 @@
 
 What each release changed for you, newest first. Each line is a commit's summary, linked to its full description and diff. Releases before 2.0.3 are described by their release commits.
 
+## 2.1.29 - 2026-11-23
+
+### Fixes
+
+- Require vpndetection 5.19.1: a timeout or retry count no lookup can run is refused when the middleware is built ([`922fac2`](https://github.com/vpndetection-io/sdk-nodejs-nextjs/commit/922fac249164a28cb8639bc1584dc72f4e87b1fa))
+
 ## 2.1.28 - 2026-11-23
 
 ### Features
