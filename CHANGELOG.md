@@ -2,6 +2,12 @@
 
 What each release changed for you, newest first. Each line is a commit's summary, linked to its full description and diff. Releases before 2.0.3 are described by their release commits.
 
+## 2.1.28 - 2026-11-23
+
+### Features
+
+- Require vpndetection 5.19.0: every request names the SDK in its User-Agent ([`dc627ef`](https://github.com/vpndetection-io/sdk-nodejs-nextjs/commit/dc627efbccad73b80fa45231b3d0e3c6acb50065))
+
 ## 2.1.27 - 2026-11-22
 
 ### Features
