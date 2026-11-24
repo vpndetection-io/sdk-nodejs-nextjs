@@ -2,6 +2,13 @@
 
 What each release changed for you, newest first. Each line is a commit's summary, linked to its full description and diff. Releases before 2.0.3 are described by their release commits.
 
+## 2.2.0 - 2026-11-24
+
+### Features
+
+- Let a verified crawler through with allowBots ([`6791c73`](https://github.com/vpndetection-io/sdk-nodejs-nextjs/commit/6791c73c360d995b4afd0e30d1932400fbf7e79a))
+- Require vpndetection 5.20.0: a user agent sent with a lookup, and twelve first_seen and last_seen members read as dates ([`a5928ee`](https://github.com/vpndetection-io/sdk-nodejs-nextjs/commit/a5928ee40554bf94e3e7ceac81e82c5b70155f87))
+
 ## 2.1.30 - 2026-11-23
 
 ### Fixes
