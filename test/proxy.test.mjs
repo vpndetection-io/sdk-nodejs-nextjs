@@ -328,3 +328,63 @@ test('builds as the README does, with the key set and unset', async () => {
         }
     }
 });
+
+// allowBots as the README builds it, with a public visitor on X-Forwarded-For:
+// the agent that reaches the API is the visitor's own, a verified crawler passes
+// the condition it meets, a spoofed or not_bot one is refused, and off sends none.
+// A NextRequest built here carries no User-Agent of its own.
+test('allowBots sends the visitor\'s User-Agent and lets only a verified crawler through', async () => {
+    const realFetch = globalThis.fetch;
+    const googlebot = 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)';
+    const sent = [];
+    let verdict = 'verified';
+    globalThis.fetch = async (input, init) => {
+        const outgoing = new Request(input, init);
+        const url = new URL(outgoing.url);
+        if (url.hostname !== 'api.vpndetection.io') {
+            return realFetch(input, init);
+        }
+        const agent = url.searchParams.get('user_agent');
+        sent.push({ path: url.pathname, agent: agent });
+        return new Response(JSON.stringify({
+            ip: PUBLIC_IP, is_vpn: false, is_bot: true,
+            ...(agent === null ? {} : { user_agent: { agent: 'Googlebot', kind: 'bot', verdict: verdict } }),
+        }), { status: 200, headers: { 'content-type': 'application/json' } });
+    };
+    const visitor = (headers) => request({ 'x-forwarded-for': PUBLIC_IP, ...headers });
+    try {
+        assert.equal(visitor({}).headers.get('user-agent'), null);
+        const on = createProxy({ apiKey: 'readme-key', cache: false, onWarn: () => {}, blockCondition: { isBot: true }, allowBots: true });
+        for (const [v, status] of [['verified', 200], ['spoofed', 403], ['not_bot', 403], ['unverifiable', 403]]) {
+            verdict = v;
+            sent.length = 0;
+            const response = await on(visitor({ 'user-agent': googlebot }));
+            assert.equal(response.status, status, v);
+            assert.deepEqual(sent, [{ path: `/${PUBLIC_IP}`, agent: googlebot }], `${v}: the visitor's own agent arrived`);
+            if (status === 200) {
+                assert.ok(response.headers.get('x-middleware-override-headers').split(',').includes(LOOKUP_HEADER));
+                assert.equal(readLookup(overriddenHeaders(response)).result.user_agent.verdict, 'verified');
+            }
+        }
+        verdict = 'verified';
+        for (const headers of [{}, { 'user-agent': '' }]) {
+            sent.length = 0;
+            assert.equal((await on(visitor(headers))).status, 403, JSON.stringify(headers));
+            assert.deepEqual(sent, [{ path: `/${PUBLIC_IP}`, agent: null }], `${JSON.stringify(headers)} sends none`);
+        }
+        const off = createProxy({ apiKey: 'readme-key', cache: false, onWarn: () => {}, blockCondition: { isBot: true } });
+        sent.length = 0;
+        assert.equal((await off(visitor({ 'user-agent': googlebot }))).status, 403);
+        assert.deepEqual(sent, [{ path: `/${PUBLIC_IP}`, agent: null }], 'off sends none');
+        const forged = createProxy({
+            apiKey: 'readme-key', cache: false, onWarn: () => {}, blockCondition: { userAgent: { verdict: 'spoofed' } },
+            allowBots: true,
+        });
+        verdict = 'spoofed';
+        assert.equal((await forged(visitor({ 'user-agent': googlebot }))).status, 403);
+        verdict = 'verified';
+        assert.equal((await forged(visitor({ 'user-agent': googlebot }))).status, 200);
+    } finally {
+        globalThis.fetch = realFetch;
+    }
+});
