@@ -2,6 +2,12 @@
 
 What each release changed for you, newest first. Each line is a commit's summary, linked to its full description and diff. Releases before 2.0.3 are described by their release commits.
 
+## 2.2.3 - 2026-11-26
+
+### Features
+
+- Require vpndetection 5.22.0: allowBots sends only a crawler's User-Agent, at most four an address ([`67b473f`](https://github.com/vpndetection-io/sdk-nodejs-nextjs/commit/67b473f8d238c16f5e2af6f62f1ec99fd42adc6c))
+
 ## 2.2.2 - 2026-11-25
 
 ### Fixes
