@@ -388,3 +388,52 @@ test('allowBots sends the visitor\'s User-Agent and lets only a verified crawler
         globalThis.fetch = realFetch;
     }
 });
+
+// A bogon peer is no plan gap. Local development reaches the app from the loopback or a private address
+// with a crawler's User-Agent, and the answer made locally carries no verdict: under onMissingField
+// 'throw' the proxy rejected that request, which Next answers with a 500, and under 'warn' it logged that
+// the plan lacks the member. Built as the README builds it, with the address on X-Forwarded-For.
+test('a bogon peer sending a crawler agent is no plan gap, whether onMissingField throws or warns', async () => {
+    const realFetch = globalThis.fetch;
+    const googlebot = 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)';
+    const sent = [];
+    globalThis.fetch = async (input, init) => {
+        const outgoing = new Request(input, init);
+        if (new URL(outgoing.url).hostname !== 'api.vpndetection.io') {
+            return realFetch(input, init);
+        }
+        sent.push(new URL(outgoing.url).pathname);
+        return new Response('{}', { status: 500 });
+    };
+    const problems = [];
+    try {
+        for (const peer of ['127.0.0.1', '10.0.0.1', '::1']) {
+            for (const action of ['throw', 'warn']) {
+                const label = `${peer}, ${action}`;
+                const warnings = [];
+                const proxy = createProxy({
+                    apiKey: 'readme-key', cache: false, allowBots: true, blockCondition: { userAgent: { verdict: 'spoofed' } },
+                    onMissingField: action, onWarn: (m) => warnings.push(m),
+                });
+                let response;
+                try {
+                    response = await proxy(request({ 'x-forwarded-for': peer, 'user-agent': googlebot }));
+                } catch (err) {
+                    problems.push(`${label}: the proxy threw, a 500 in Next: ${err.message}`);
+                    continue;
+                }
+                const forwarded = readLookup(overriddenHeaders(response));
+                if (response.status !== 200 || forwarded?.blocked !== false || forwarded.result?.is_bogon !== true) {
+                    problems.push(`${label}: want an unblocked bogon answer, got ${response.status} ${JSON.stringify(forwarded)}`);
+                }
+                for (const message of warnings.filter((m) => !/not a public address/.test(m))) {
+                    problems.push(`${label}: warned of a plan gap: ${message}`);
+                }
+            }
+        }
+    } finally {
+        globalThis.fetch = realFetch;
+    }
+    assert.deepEqual(sent, [], 'a bogon never reaches the API');
+    assert.deepEqual(problems, []);
+});
